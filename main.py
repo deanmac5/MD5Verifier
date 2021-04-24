@@ -21,15 +21,34 @@ def choose_file_b():
     enable_compare()
 
 
+def convert_to_dict(line_list):
+    result = {}
+    for item in line_list:
+        val = item.split('  ')
+        result[val[1].rstrip()] = val[0].rstrip()
+    return result
+
+
 def compare_pressed():
-    print("compare pressed")
-    print(f"A: {file_a_filename}")
-    print(f"B: {file_b_filename}")
+    with open(file_a_filename) as af:
+        a_text = af.readlines()
+    with open(file_b_filename) as bf:
+        b_text = bf.readlines()
+    a_dict = convert_to_dict(a_text)
+    b_dict = convert_to_dict(b_text)
+    compare_dicts(a_dict, b_dict)
 
 
 def enable_compare():
     if len(file_a_label.cget("text")) != 0 and len(file_b_label.cget("text")) != 0:
         compare_button.config(state="normal")
+
+
+def compare_dicts(a_dict, b_dict):
+    missing_file = []
+    for k in a_dict:
+        if k not in b_dict:
+            missing_file.add(k)
 
 
 window = Tk()
@@ -55,8 +74,6 @@ file_b_label.grid(row=2, column=1)
 
 compare_button = Button(text="Compare", state="disabled", command=compare_pressed)
 compare_button.grid(row=3, column=1)
-
-
 
 
 window.mainloop()
